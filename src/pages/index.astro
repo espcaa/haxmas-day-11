@@ -1,16 +1,50 @@
 ---
+import { getCollection } from "astro:content";
+import FormattedDate from "../components/FormattedDate.astro";
+import "../styles/global.css";
+
+const posts = (await getCollection("blog")).sort(
+    (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
+
 
 ---
 
 <html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
+    <head>
+        <meta charset="utf-8" />
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <meta name="viewport" content="width=device-width" />
+        <meta name="generator" content={Astro.generator} />
+        <title>alice's blog \o/</title>
+    </head>
+    <body>
+        <main class="page-shell home">
+            <div class="page-header">
+                <img
+                    src="https://files.catbox.moe/8l5zfo.jpg"
+                    alt="Header image"
+                    class="header-image"
+                />
+                <h1>alice's blog \o/</h1>
+            </div>
+
+            {posts.length === 0 && <p class="empty">No posts yet :(</p>}
+
+            <div class="posts">
+                {
+                    posts.map((post) => (
+                        <a href={`/posts/${post.id}`} class="post-card">
+                            <h2 class="title">{post.data.title}</h2>
+                            <p class="description">{post.data.description}</p>
+                            <p class="meta">
+                                Published on{" "}
+                                <FormattedDate date={post.data.pubDate} />
+                            </p>
+                        </a>
+                    ))
+                }
+            </div>
+        </main>
+    </body>
 </html>
